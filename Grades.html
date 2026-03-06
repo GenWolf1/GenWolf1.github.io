@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyGrades</title>
+</head>
+<body>
+    <p id="Grade"></p>
+    <script>
+        let a = "Name: Keith Dredd C. Millana";
+        let b = 90;
+        let c = 88;
+        let d = 90;
+        let e = 89;
+        let f = 4;
+        let g = (b + c + d + e) / f;
+           {if (g>=75) {txt = "Passed!";} else {txt = "Failed!";} }
+        document.getElementById("Grade").innerHTML = a + "<br>" + "1st Grading: " + b + "<br>"
+         + "2nd Grading: " + c + "<br>" + "3rd Grading: " + d + "<br>" + "4th Grading: " + e + "<br>" + "Average Grade: "
+          + g + "<br>" + "Remarks: " + txt;
+         
+    </script>
+</body>
+</html>
