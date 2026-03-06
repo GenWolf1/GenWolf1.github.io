@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<center>
+<div>
+    <h2>Login</h2>
+    <input type="text" id="User" placeholder="Username">
+</div>
+<input type="text" id = "gen" placeholder="Password">
+<br></br>
+<button onclick=Getvalue()>Log in </button>
+<div>
+</div>
+<div>
+<input type="checkbox" onclick="PakyuWenz()"> Hide password
+<br><br>
+</div>
+<p id="Gen"></p>
+</center>
+<script>
+    function PakyuWenz() {
+        let b = document.getElementById("gen");
+        if (b.type === "password") {
+            b.type = "text";
+        } else {
+            b.type = "password";
+        }
+    }
+    function Getvalue(){
+            let username = document.getElementById("User").value;
+            let password = document.getElementById("gen").value;
+              if (username === "GenWolf") {
+        if (password === "Jayoma") {
+            alert("Login Successfully!");
+        } else {
+            alert("Incorrect Password!");
+        }
+    } else { 
+        alert("Username Not Found.");
+    }
+    {
+        if ( username === ""){
+            alert("Please fill in username.")
+    }  if (password === "")
+        alert("Please fill in password.")
+        }
+    }
+</script>
+</body>
+</html>
