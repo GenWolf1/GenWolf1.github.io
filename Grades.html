@@ -3,23 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyGrades</title>
+    <title>MyGrades - Interactive Grade Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .grades-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result-card {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .student-name {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .grade-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+        }
+
+        .grade-item:last-child {
+            border-bottom: none;
+        }
+
+        .average-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #667eea;
+        }
+
+        .average {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .remarks {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .passed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-error {
+            border-color: #dc3545 !important;
+        }
+
+        .clear-btn {
+            margin-top: 10px;
+            background: #6c757d;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+        }
+    </style>
 </head>
 <body>
-    <p id="Grade"></p>
+    <div class="container">
+        <h1>📚 MyGrades</h1>
+        
+        <div class="input-group">
+            <label for="studentName">Student Name</label>
+            <input type="text" id="studentName" placeholder="Enter your full name">
+            <span class="error" id="nameError">Please enter your name</span>
+        </div>
+
+        <div class="grades-grid">
+            <div class="input-group">
+                <label for="grade1">1st Grading</label>
+                <input type="number" id="grade1" placeholder="0-100" min="0" max="100">
+                <span class="error" id="error1">Invalid grade</span>
+            </div>
+            <div class="input-group">
+                <label for="grade2">2nd Grading</label>
+                <input type="number" id="grade2" placeholder="0-100" min="0" max="100">
+                <span class="error" id="error2">Invalid grade</span>
+            </div>
+            <div class="input-group">
+                <label for="grade3">3rd Grading</label>
+                <input type="number" id="grade3" placeholder="0-100" min="0" max="100">
+                <span class="error" id="error3">Invalid grade</span>
+            </div>
+            <div class="input-group">
+                <label for="grade4">4th Grading</label>
+                <input type="number" id="grade4" placeholder="0-100" min="0" max="100">
+                <span class="error" id="error4">Invalid grade</span>
+            </div>
+        </div>
+
+        <button onclick="calculateGrade()">Calculate Average</button>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
+
+        <div class="result-card" id="resultCard">
+            <div class="student-name" id="displayName"></div>
+            <div id="gradesList"></div>
+            <div class="average-section">
+                <div class="grade-item">
+                    <span>Average Grade:</span>
+                    <span class="average" id="displayAverage"></span>
+                </div>
+                <span class="remarks" id="displayRemarks"></span>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let a = "Name: Keith Dredd C. Millana";
-        let b = 90;
-        let c = 88;
-        let d = 90;
-        let e = 89;
-        let f = 4;
-        let g = (b + c + d + e) / f;
-           {if (g>=75) {txt = "Passed!";} else {txt = "Failed!";} }
-        document.getElementById("Grade").innerHTML = a + "<br>" + "1st Grading: " + b + "<br>"
-         + "2nd Grading: " + c + "<br>" + "3rd Grading: " + d + "<br>" + "4th Grading: " + e + "<br>" + "Average Grade: "
-          + g + "<br>" + "Remarks: " + txt;
-         
+        // Load saved data when page loads
+        window.onload = function() {
+            loadSavedData();
+        };
+
+        function calculateGrade() {
+            // Get input values
+            const name = document.getElementById('studentName').value.trim();
+            const g1 = parseFloat(document.getElementById('grade1').value);
+            const g2 = parseFloat(document.getElementById('grade2').value);
+            const g3 = parseFloat(document.getElementById('grade3').value);
+            const g4 = parseFloat(document.getElementById('grade4').value);
+
+            // Reset errors
+            document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
+
+            let hasError = false;
+
+            // Validate name
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                document.getElementById('studentName').classList.add('input-error');
+                hasError = true;
+            }
+
+            // Validate grades
+            const grades = [g1, g2, g3, g4];
+            const gradeInputs = ['grade1', 'grade2', 'grade3', 'grade4'];
+            
+            grades.forEach((grade, index) => {
+                if (isNaN(grade) || grade < 0 || grade > 100) {
+                    document.getElementById(`error${index + 1}`).style.display = 'block';
+                    document.getElementById(gradeInputs[index]).classList.add('input-error');
+                    hasError = true;
+                }
+            });
+
+            if (hasError) return;
+
+            // Calculate average
+            const average = (g1 + g2 + g3 + g4) / 4;
+            const remarks = average >= 75 ? "Passed!" : "Failed!";
+            const remarksClass = average >= 75 ? "passed" : "failed";
+
+            // Save to localStorage
+            const data = {
+                name: name,
+                grades: [g1, g2, g3, g4],
+                average: average.toFixed(2),
+                remarks: remarks,
+                timestamp: new Date().toLocaleString()
+            };
+            localStorage.setItem('myGradesData', JSON.stringify(data));
+
+            // Display results
+            displayResults(name, grades, average, remarks, remarksClass);
+        }
+
+        function displayResults(name, grades, average, remarks, remarksClass) {
+            document.getElementById('displayName').textContent = `👤 ${name}`;
+            
+            const gradesList = document.getElementById('gradesList');
+            gradesList.innerHTML = '';
+            
+            const gradingLabels = ['1st Grading', '2nd Grading', '3rd Grading', '4th Grading'];
+            grades.forEach((grade, index) => {
+                gradesList.innerHTML += `
+                    <div class="grade-item">
+                        <span>${gradingLabels[index]}:</span>
+                        <span><strong>${grade}</strong></span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('displayAverage').textContent = average.toFixed(2);
+            
+            const remarksElement = document.getElementById('displayRemarks');
+            remarksElement.textContent = remarks;
+            remarksElement.className = `remarks ${remarksClass}`;
+
+            document.getElementById('resultCard').classList.add('show');
+        }
+
+        function clearAll() {
+            // Clear inputs
+            document.getElementById('studentName').value = '';
+            document.getElementById('grade1').value = '';
+            document.getElementById('grade2').value = '';
+            document.getElementById('grade3').value = '';
+            document.getElementById('grade4').value = '';
+            
+            // Hide results
+            document.getElementById('resultCard').classList.remove('show');
+            
+            // Clear errors
+            document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
+            
+            // Clear localStorage
+            localStorage.removeItem('myGradesData');
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem('myGradesData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('studentName').value = data.name;
+                document.getElementById('grade1').value = data.grades[0];
+                document.getElementById('grade2').value = data.grades[1];
+                document.getElementById('grade3').value = data.grades[2];
+                document.getElementById('grade4').value = data.grades[3];
+                
+                const remarksClass = data.remarks === "Passed!" ? "passed" : "failed";
+                displayResults(data.name, data.grades, parseFloat(data.average), data.remarks, remarksClass);
+            }
+        }
+
+        // Allow Enter key to calculate
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calculateGrade();
+                }
+            });
+        });
     </script>
 </body>
 </html>
